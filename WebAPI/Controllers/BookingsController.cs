@@ -73,10 +73,10 @@ public class BookingsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] BookingPostDTO dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        dto.UserId = userId; 
         var id = await _service.CreateAsync(dto);
-        var created = await _service.GetByIdAsync(id);
-        return CreatedAtAction(nameof(GetById), new { id }, created);
+        return Ok(new { id = id, message = "Rezervasiya yaradıldı" });
     }
 
     [HttpPut("{id:guid}")]
