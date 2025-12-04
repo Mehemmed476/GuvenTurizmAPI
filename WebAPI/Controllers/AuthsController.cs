@@ -64,5 +64,33 @@ namespace WebAPI.Controllers
                 roles
             });
         }
+        
+        [HttpPost("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(token))
+                return BadRequest("Yanlış sorğu");
+
+            var res = await _auth.ConfirmEmailAsync(userId, token);
+            return res.Succeeded ? Ok(res) : BadRequest(res);
+        }
+        
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            await _auth.ForgotPasswordAsync(dto.Email);
+            // Həmişə OK qaytarırıq ki, hakerlər emailin bazada olub-olmadığını yoxlaya bilməsin
+            return Ok(new { message = "Əgər bu email mövcuddursa, sıfırlama linki göndərildi." });
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            var result = await _auth.ResetPasswordAsync(dto);
+            return result.Succeeded ? Ok(result) : BadRequest(result);
+        }
     }
 }

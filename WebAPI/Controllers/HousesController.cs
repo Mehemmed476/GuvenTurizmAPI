@@ -25,12 +25,11 @@ public class HousesController : ControllerBase
         return Ok(data);
     }
 
-    // AZ: Aktiv evlər (hamı)
     [HttpGet("active")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetAllActive()
+    public async Task<IActionResult> GetAllActive([FromQuery] int page = 1, [FromQuery] int size = 9)
     {
-        var data = await _service.GetAllActiveHousesByAsync();
+        var data = await _service.GetAllActiveHousesAsync(page, size);
         return Ok(data);
     }
 
