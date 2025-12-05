@@ -1,0 +1,33 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ "main" ] # Əgər sizdə 'master'dirsə, bura 'master' yazın
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        port: 22
+        script: |
+          # 1. Layihə qovluğuna keç
+          cd /var/www/guventurizm
+
+          # 2. Ən son kodu GitHub-dan çək
+          git pull origin main
+
+          # 3. Docker imicini yenidən yığ (Build)
+          docker build -t guventurizm-api .
+
+          # 4. Konteyneri yenidən başlat (Update)
+          docker compose up -d api
+
+          # 5. Artıq (köhnə) imicləri təmizlə
+          docker image prune -f
