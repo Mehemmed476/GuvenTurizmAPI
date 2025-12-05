@@ -102,11 +102,13 @@ builder.Services.AddCors(o => o.AddPolicy("spa",
     p => p
         .AllowAnyHeader()
         .AllowAnyMethod()
-        .AllowCredentials() // Cookie veya Auth Header gönderiyorsan bu gereklidir
+        .AllowCredentials()
         .WithOrigins(
             "http://localhost:5173", 
             "http://localhost:3000", 
-            "http://45.67.203.113" // <-- BURAYA SUNUCU IP ADRESİNİ EKLEDİK
+            "http://45.67.203.113",
+            "https://guventurizm.az",       // <--- YENİ
+            "https://www.guventurizm.az"    // <--- YENİ
         )
 ));
 
