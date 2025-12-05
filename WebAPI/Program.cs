@@ -99,8 +99,16 @@ builder.Services.AddAuthorization(opts =>
 });
 
 builder.Services.AddCors(o => o.AddPolicy("spa",
-    p => p.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
-          .WithOrigins("http://localhost:5173", "http://localhost:3000")));
+    p => p
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials() // Cookie veya Auth Header gönderiyorsan bu gereklidir
+        .WithOrigins(
+            "http://localhost:5173", 
+            "http://localhost:3000", 
+            "http://45.67.203.113" // <-- BURAYA SUNUCU IP ADRESİNİ EKLEDİK
+        )
+));
 
 builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
 
@@ -136,7 +144,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCors("spa");        
 app.UseAuthentication();  
