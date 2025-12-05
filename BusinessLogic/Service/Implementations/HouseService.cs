@@ -39,15 +39,20 @@ public class HouseService : IHouseService
         return _mapper.Map<ICollection<HouseGetDTO>>(houses);
     }
 
-    public async Task<ICollection<HouseGetDTO>> GetAllActiveHousesByAsync()
+    public async Task<ICollection<HouseGetDTO>> GetAllActiveHousesAsync(int page = 1, int size = 9)
     {
-        var houses = await _houseRepository
+        var query = _houseRepository
             .GetAllByCondition(h => !h.IsDeleted,
                 "Category",
                 "Images",
                 "Bookings",
                 "HouseHouseAdvantageRels",
-                "HouseHouseAdvantageRels.HouseAdvantage")
+                "HouseHouseAdvantageRels.HouseAdvantage");
+
+        var houses = await query
+            .OrderByDescending(x => x.CreatedAt)
+            .Skip((page - 1) * size)
+            .Take(size)
             .ToListAsync();
 
         return _mapper.Map<ICollection<HouseGetDTO>>(houses);

@@ -4,6 +4,7 @@ using Data.MSSQL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.MSSQL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204212316_AddReview")]
+    partial class AddReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,97 +134,19 @@ namespace Data.MSSQL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("39ab03f1-a10e-4a77-8d72-72265ae05991"),
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6948),
+                            Id = new Guid("17696d6a-529e-4b46-b88c-0cdffc98fe9a"),
+                            CreatedAt = new DateTime(2025, 12, 5, 1, 23, 15, 476, DateTimeKind.Utc).AddTicks(1719),
                             Description = "Denize sıfır, özel havuzlu villalar.",
                             IsDeleted = false,
                             Title = "Deniz Manzaralı Villalar"
                         },
                         new
                         {
-                            Id = new Guid("eea3f0e7-1c5a-4727-b814-3011a7a0e24d"),
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6951),
+                            Id = new Guid("2fef9259-2d0c-41c6-873f-37188d87a386"),
+                            CreatedAt = new DateTime(2025, 12, 5, 1, 23, 15, 476, DateTimeKind.Utc).AddTicks(1751),
                             Description = "Merkezi konumda modern daireler.",
                             IsDeleted = false,
                             Title = "Şehir Daireleri"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Entities.FAQ", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FAQs");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("893370d0-4f26-4870-bb43-e6074969699d"),
-                            Answer = "Bəli, evlərimizin 90%-i sürətli internetlə təmin olunub.",
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6934),
-                            DisplayOrder = 1,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Question = "Evlərdə Wi-Fi var?"
-                        },
-                        new
-                        {
-                            Id = new Guid("c8abaca6-c3fb-41c4-9630-0563609290e4"),
-                            Answer = "Saytımızdan bəyəndiyiniz evi seçib 'Bron et' düyməsinə basaraq.",
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6940),
-                            DisplayOrder = 2,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Question = "Necə rezervasiya edə bilərəm?"
-                        },
-                        new
-                        {
-                            Id = new Guid("b7a010b1-18cd-4588-937d-d77cf20001b1"),
-                            Answer = "Giriş 14:00, Çıxış 12:00-dır.",
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6942),
-                            DisplayOrder = 3,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Question = "Giriş və Çıxış saatları neçədir?"
                         });
                 });
 
@@ -322,12 +247,12 @@ namespace Data.MSSQL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("327bb7f6-3fff-433b-937f-af1b2f983c69"),
+                            Id = new Guid("bb97e7f2-9ab6-4e55-b29f-828b046d5c32"),
                             Address = "Kaş, Antalya",
-                            CategoryId = new Guid("39ab03f1-a10e-4a77-8d72-72265ae05991"),
+                            CategoryId = new Guid("17696d6a-529e-4b46-b88c-0cdffc98fe9a"),
                             City = "Antalya",
                             CoverImage = "villa1.jpg",
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6954),
+                            CreatedAt = new DateTime(2025, 12, 5, 1, 23, 15, 476, DateTimeKind.Utc).AddTicks(1757),
                             Description = "3 katlı, 4 odalı, özel havuzlu mükemmel villa.",
                             Field = 350,
                             GoogleMapsCode = "https://maps.google.com/...",
@@ -340,12 +265,12 @@ namespace Data.MSSQL.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f3f3f8af-2c41-4a82-944a-3a9d32a25b5f"),
+                            Id = new Guid("deaa919b-33f9-4b4c-be74-317bfca22cb5"),
                             Address = "Şişli, İstanbul",
-                            CategoryId = new Guid("eea3f0e7-1c5a-4727-b814-3011a7a0e24d"),
+                            CategoryId = new Guid("2fef9259-2d0c-41c6-873f-37188d87a386"),
                             City = "İstanbul",
                             CoverImage = "daire1.jpg",
-                            CreatedAt = new DateTime(2025, 12, 5, 2, 56, 33, 114, DateTimeKind.Utc).AddTicks(6960),
+                            CreatedAt = new DateTime(2025, 12, 5, 1, 23, 15, 476, DateTimeKind.Utc).AddTicks(1763),
                             Description = "Metroya yakın, 2 odalı şık daire.",
                             Field = 90,
                             GoogleMapsCode = "https://maps.google.com/...",
@@ -404,22 +329,22 @@ namespace Data.MSSQL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a4f17607-af61-440b-bd9e-032c237361ec"),
-                            HouseId = new Guid("327bb7f6-3fff-433b-937f-af1b2f983c69"),
+                            Id = new Guid("aace6701-0332-4dcc-973f-9af1ac51c131"),
+                            HouseId = new Guid("bb97e7f2-9ab6-4e55-b29f-828b046d5c32"),
                             Image = "villa1_1.jpg",
                             IsDeleted = false
                         },
                         new
                         {
-                            Id = new Guid("b5b54091-325f-41a3-b6fd-8ba3452661a9"),
-                            HouseId = new Guid("327bb7f6-3fff-433b-937f-af1b2f983c69"),
+                            Id = new Guid("0eb9841f-3404-4db8-a2cb-3f3b7a3e773b"),
+                            HouseId = new Guid("bb97e7f2-9ab6-4e55-b29f-828b046d5c32"),
                             Image = "villa1_2.jpg",
                             IsDeleted = false
                         },
                         new
                         {
-                            Id = new Guid("65e16794-ad71-44f7-bb90-7ebe554e6863"),
-                            HouseId = new Guid("f3f3f8af-2c41-4a82-944a-3a9d32a25b5f"),
+                            Id = new Guid("eb48a13d-8869-45b7-a0ce-56d706b9b1aa"),
+                            HouseId = new Guid("deaa919b-33f9-4b4c-be74-317bfca22cb5"),
                             Image = "daire1_1.jpg",
                             IsDeleted = false
                         });
@@ -499,79 +424,6 @@ namespace Data.MSSQL.Migrations
                     b.HasIndex("HouseId");
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Setting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Settings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("19656215-08f9-4c07-8cd1-ed624273d2fc"),
-                            IsDeleted = false,
-                            Key = "PhoneNumber",
-                            Value = "+994 50 123 45 67"
-                        },
-                        new
-                        {
-                            Id = new Guid("870f1b9b-6948-4107-990d-556d462ed775"),
-                            IsDeleted = false,
-                            Key = "Email",
-                            Value = "info@guventurizm.az"
-                        },
-                        new
-                        {
-                            Id = new Guid("41ce62ad-3b62-4d4f-8d21-780f84ed519f"),
-                            IsDeleted = false,
-                            Key = "Address",
-                            Value = "H. Əliyev pr., Quba, Azərbaycan"
-                        },
-                        new
-                        {
-                            Id = new Guid("b458ccb6-a9f3-43a5-836d-395a9893ba5b"),
-                            IsDeleted = false,
-                            Key = "Instagram",
-                            Value = "https://instagram.com/guventurizm"
-                        },
-                        new
-                        {
-                            Id = new Guid("d5caedb6-8baf-489a-a22c-3914086c4c4f"),
-                            IsDeleted = false,
-                            Key = "Facebook",
-                            Value = "https://facebook.com/guventurizm"
-                        },
-                        new
-                        {
-                            Id = new Guid("bf22b336-47bf-4406-9938-214e453e49e9"),
-                            IsDeleted = false,
-                            Key = "Whatsapp",
-                            Value = "https://wa.me/994501234567"
-                        },
-                        new
-                        {
-                            Id = new Guid("98f1708e-002f-44fc-bf1e-40e2a85fe1e4"),
-                            IsDeleted = false,
-                            Key = "Copyright",
-                            Value = "© 2025 Güvən Turizm. Bütün hüquqlar qorunur."
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
