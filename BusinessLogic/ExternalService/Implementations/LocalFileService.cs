@@ -18,11 +18,18 @@ public class LocalFileService : IFileService
 
     public async Task<string> SaveAsync(IFormFile file, string folder, bool isPublic = true, CancellationToken ct = default)
     {
-        if (file.Length <= 0) throw new InvalidOperationException("Empty file.");
+        if (file.Length <= 0) throw new InvalidOperationException("Boş dosya.");
 
-        var ext = Path.GetExtension(file.FileName);
-        var name = $"{Guid.NewGuid():N}{ext}".ToLowerInvariant();
-        var key = Path.Combine(folder, name).Replace('\\','/');
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".pdf" };
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(ext))
+        {
+            throw new Exception($"GÜVENLİK UYARISI: {ext} uzantılı dosya yüklenemez!");
+        }
+
+        var name = $"{Guid.NewGuid():N}{ext}";
+        var key = Path.Combine(folder, name).Replace('\\', '/');
 
         var full = Path.Combine(_opt.RootPath, key);
         Directory.CreateDirectory(Path.GetDirectoryName(full)!);
