@@ -18,6 +18,10 @@ public class AppDbContext : IdentityDbContext<IdentityUser, IdentityRole, string
     public DbSet<Review> Reviews { get; set; }
     public DbSet<FAQ> FAQs { get; set; }
     public DbSet<Setting> Settings { get; set; }
+    public DbSet<Tour> Tours { get; set; }
+    public DbSet<TourFile> TourFiles { get; set; }
+    public DbSet<TourPackage> TourPackages { get; set; }
+    public DbSet<TourPackageInclusion> TourPackageInclusions { get; set; }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)
