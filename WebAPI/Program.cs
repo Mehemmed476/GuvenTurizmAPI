@@ -122,6 +122,10 @@ builder.Services.AddScoped<IHouseAdvantageRepository, HouseAdvantageRepository>(
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IFAQRepository, FAQRepository>();
 builder.Services.AddScoped<ISettingRepository, SettingRepository>();
+builder.Services.AddScoped<ITourRepository, TourRepository>();
+builder.Services.AddScoped<ITourFileRepository, TourFileRepository>();
+builder.Services.AddScoped<ITourPackageRepository, TourPackageRepository>();
+builder.Services.AddScoped<ITourPackageInclusionRepository, TourPackageInclusionRepository>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -133,6 +137,7 @@ builder.Services.AddScoped<IHouseAdvantageService, HouseAdvantageService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IStatsService, StatsService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
+builder.Services.AddScoped<ITourService, TourService>();
 
 builder.Services.AddScoped<IFileService, LocalFileService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
