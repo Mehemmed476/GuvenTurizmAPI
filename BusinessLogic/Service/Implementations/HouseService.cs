@@ -43,11 +43,7 @@ public class HouseService : IHouseService
     {
         var query = _houseRepository
             .GetAllByCondition(h => !h.IsDeleted,
-                "Category",
-                "Images",
-                "Bookings",
-                "HouseHouseAdvantageRels",
-                "HouseHouseAdvantageRels.HouseAdvantage");
+                "Category");
 
         var houses = await query
             .OrderByDescending(x => x.CreatedAt)
