@@ -78,8 +78,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity, new()
     {
         IQueryable<T> query = Table.AsQueryable();
 
-        T? entity = await query.SingleOrDefaultAsync(expression);
-        
         if (includes.Length > 0)
         {
             foreach (string include in includes)
@@ -87,8 +85,8 @@ public class Repository<T> : IRepository<T> where T : BaseEntity, new()
                 query = query.Include(include);
             }
         } 
-        
-        return entity;
+    
+        return await query.SingleOrDefaultAsync(expression);
     }
 
     public async Task<int> SaveChangesAsync()

@@ -69,11 +69,14 @@ public class TourService : ITourService
     // 4. ID'YE GÖRE GETİR (Detay Sayfası)
     public async Task<TourGetDTO> GetTourByIdAsync(Guid id)
     {
-        var tour = await _tourRepository.GetByIdAsync(id,
-            "TourFiles",
-            "TourPackages",
-            "TourPackages.Inclusions"
-        );
+        var tour = await _tourRepository.GetAllByCondition(
+                x => x.Id == id,
+                "TourFiles",
+                "TourPackages",
+                "TourPackages.Inclusions"
+            )
+            .AsNoTracking() // <--- ƏN VACİB HİSSƏ BUDUR
+            .FirstOrDefaultAsync();
 
         return _mapper.Map<TourGetDTO>(tour);
     }
