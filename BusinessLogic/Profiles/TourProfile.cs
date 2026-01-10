@@ -13,7 +13,8 @@ namespace BusinessLogic.Profiles
             // --- TOUR ---
             CreateMap<Tour, TourGetDTO>()
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.TourFiles.Select(x => x.Path).ToList()))
-                .ForMember(dest => dest.TourFiles, opt => opt.MapFrom(src => src.TourFiles));
+                .ForMember(dest => dest.TourFiles, opt => opt.MapFrom(src => src.TourFiles))
+                .ForMember(dest => dest.Packages, opt => opt.MapFrom(src => src.TourPackages));
 
             CreateMap<TourPostDTO, Tour>()
                 .ForMember(dest => dest.TourFiles, opt => opt.Ignore()); 
