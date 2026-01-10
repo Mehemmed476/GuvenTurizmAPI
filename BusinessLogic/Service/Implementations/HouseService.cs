@@ -30,11 +30,7 @@ public class HouseService : IHouseService
     public async Task<ICollection<HouseGetDTO>> GetAllHousesAsync()
     {
         var houses = await _houseRepository.GetAllAsync(
-            "Category",
-            "Images",
-            "Bookings",
-            "HouseHouseAdvantageRels",
-            "HouseHouseAdvantageRels.HouseAdvantage"
+            "Category"
         );
         return _mapper.Map<ICollection<HouseGetDTO>>(houses);
     }
