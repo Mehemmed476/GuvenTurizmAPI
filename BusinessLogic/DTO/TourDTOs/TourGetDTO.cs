@@ -15,5 +15,13 @@ public class TourGetDTO
         
     // İlişkiler
     public List<string> ImageUrls { get; set; } // Resim yolları
+    public List<TourFileDto> TourFiles { get; set; }
     public List<TourPackageGetDTO> Packages { get; set; } // Paketler
+}
+
+public class TourFileDto
+{
+    public Guid Id { get; set; }
+    public string Path { get; set; }
+    public bool IsMain { get; set; } // Kapak resmi olup olmadığını bilmek istersen
 }
