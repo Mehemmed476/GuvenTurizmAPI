@@ -78,21 +78,23 @@ public class TourService : ITourService
     public async Task CreateTourAsync(TourPostDTO dto)
     {
         var tour = _mapper.Map<Tour>(dto);
-        tour.IsActive = true; // Yarananda aktiv olsun
+        tour.IsActive = true; 
 
-        // HouseService-dəki "Images" məntiqi kimi
+        // 1. Şəkillər üçün siyahını başlat (Əks halda NullReference xətası verir)
+        tour.TourFiles = new List<TourFile>(); 
+
         if (dto.Files is not null && dto.Files.Count > 0)
         {
             foreach (var file in dto.Files)
             {
                 var key = await _fileService.SaveAsync(file, "tours/gallery");
-                
+            
                 // İlk şəkil avtomatik "Main" (Kapak) şəkli olsun
                 bool isFirst = tour.TourFiles.Count == 0;
-                
+            
                 tour.TourFiles.Add(new TourFile 
                 { 
-                    TourId = tour.Id, 
+                    TourId = tour.Id, // (Bəzən EF Core bunu avtomatik edir, amma əllə yazmaq daha etibarlıdır)
                     Path = key, 
                     FileName = file.FileName, 
                     ContentType = file.ContentType,
@@ -101,7 +103,9 @@ public class TourService : ITourService
             }
         }
 
-        // HouseService-dəki "Advantage" məntiqinə bənzər Paket əlavə etmə
+        // 2. Paketlər üçün siyahını başlat (Ən vacib hissə buradır!)
+        tour.TourPackages = new List<TourPackage>();
+
         if (dto.Packages is not null && dto.Packages.Count > 0)
         {
             foreach (var pkgDto in dto.Packages)
@@ -111,7 +115,7 @@ public class TourService : ITourService
                     PackageName = pkgDto.PackageName,
                     Price = pkgDto.Price,
                     DiscountPrice = pkgDto.DiscountPrice,
-                    Inclusions = new List<TourPackageInclusion>()
+                    Inclusions = new List<TourPackageInclusion>() // İçindəkiləri də başlat
                 };
 
                 if (pkgDto.Inclusions is not null)
@@ -121,6 +125,7 @@ public class TourService : ITourService
                         newPackage.Inclusions.Add(new TourPackageInclusion { Description = inc });
                     }
                 }
+                // Artıq tour.TourPackages null deyil, rahat əlavə edə bilərik
                 tour.TourPackages.Add(newPackage);
             }
         }
