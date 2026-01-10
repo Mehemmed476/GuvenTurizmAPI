@@ -14,38 +14,37 @@ public class TourService : ITourService
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
 
-    public TourService(ITourRepository tourRepository, IFileService fileService, IMapper mapper)
+    public TourService(
+        ITourRepository tourRepository,
+        IFileService fileService,
+        IMapper mapper)
     {
         _tourRepository = tourRepository;
         _fileService = fileService;
         _mapper = mapper;
     }
 
-    // 1. TÜM TURLARI GETİR (Admin Paneli İçin)
     public async Task<ICollection<TourGetDTO>> GetAllToursAsync()
     {
         var tours = await _tourRepository.GetAllAsync(
-            "TourFiles", 
-            "TourPackages", 
+            "TourFiles",
+            "TourPackages",
             "TourPackages.Inclusions"
         );
         return _mapper.Map<ICollection<TourGetDTO>>(tours);
     }
 
-    // 2. AKTİF TURLARI SAYFALI GETİR (Site Arayüzü İçin)
     public async Task<ICollection<TourGetDTO>> GetAllActiveToursAsync(int page = 1, int size = 9)
     {
-        // HouseService'deki mantığın aynısı: IsDeleted olmayanları filtrele
-        var query = _tourRepository.GetAllByCondition(
-            x => !x.IsDeleted && x.IsActive, // Hem silinmemiş hem de aktif işaretli olanlar
-            "TourFiles",
-            "TourPackages",
-            "TourPackages.Inclusions"
-        );
+        // HouseService-dəki məntiqlə eyni: IsDeleted olmayanlar
+        var query = _tourRepository
+            .GetAllByCondition(t => !t.IsDeleted && t.IsActive,
+                "TourFiles",
+                "TourPackages",
+                "TourPackages.Inclusions");
 
-        // Pagination (Sayfalama)
         var tours = await query
-            .OrderByDescending(x => x.CreatedAt) // En yeniler en üstte
+            .OrderByDescending(x => x.CreatedAt)
             .Skip((page - 1) * size)
             .Take(size)
             .ToListAsync();
@@ -53,75 +52,76 @@ public class TourService : ITourService
         return _mapper.Map<ICollection<TourGetDTO>>(tours);
     }
 
-    // 3. LOKASYONA GÖRE GETİR (Filtreleme)
     public async Task<ICollection<TourGetDTO>> GetToursByLocationAsync(string location)
     {
-        var tours = await _tourRepository.GetAllByCondition(
-            x => !x.IsDeleted && x.IsActive && x.Location.Contains(location), // İsme göre arama
-            "TourFiles",
-            "TourPackages",
-            "TourPackages.Inclusions"
-        ).ToListAsync();
+        var tours = await _tourRepository
+            .GetAllByCondition(t => !t.IsDeleted && t.IsActive && t.Location.Contains(location),
+                "TourFiles",
+                "TourPackages",
+                "TourPackages.Inclusions")
+            .ToListAsync();
 
         return _mapper.Map<ICollection<TourGetDTO>>(tours);
     }
 
-    // 4. ID'YE GÖRE GETİR (Detay Sayfası)
     public async Task<TourGetDTO> GetTourByIdAsync(Guid id)
     {
-        var tour = await _tourRepository.GetAllByCondition(
-                x => x.Id == id,
-                "TourFiles",
-                "TourPackages",
-                "TourPackages.Inclusions"
-            )
-            .AsNoTracking() // <--- ƏN VACİB HİSSƏ BUDUR
-            .FirstOrDefaultAsync();
+        // BURASI ÇOX VACİBDİR: Paketləri və İçindəkiləri mütləq Include edirik
+        var tour = await _tourRepository.GetByIdAsync(id,
+            "TourFiles",
+            "TourPackages",
+            "TourPackages.Inclusions");
 
         return _mapper.Map<TourGetDTO>(tour);
     }
 
-    // 5. OLUŞTURMA (Create)
     public async Task CreateTourAsync(TourPostDTO dto)
     {
         var tour = _mapper.Map<Tour>(dto);
+        tour.IsActive = true; // Yarananda aktiv olsun
 
-        // Resimler
-        if (dto.Files != null && dto.Files.Count > 0)
+        // HouseService-dəki "Images" məntiqi kimi
+        if (dto.Files is not null && dto.Files.Count > 0)
         {
-            tour.TourFiles = new List<TourFile>();
             foreach (var file in dto.Files)
             {
-                var path = await _fileService.SaveAsync(file, "tours/gallery");
+                var key = await _fileService.SaveAsync(file, "tours/gallery");
+                
+                // İlk şəkil avtomatik "Main" (Kapak) şəkli olsun
+                bool isFirst = tour.TourFiles.Count == 0;
+                
                 tour.TourFiles.Add(new TourFile 
                 { 
-                    Path = path, 
+                    TourId = tour.Id, 
+                    Path = key, 
                     FileName = file.FileName, 
                     ContentType = file.ContentType,
-                    IsMain = tour.TourFiles.Count == 0 // İlk resim kapak resmi olsun
+                    IsMain = isFirst 
                 });
             }
         }
 
-        // Paketler
-        if (dto.Packages != null)
+        // HouseService-dəki "Advantage" məntiqinə bənzər Paket əlavə etmə
+        if (dto.Packages is not null && dto.Packages.Count > 0)
         {
-            tour.TourPackages = new List<TourPackage>();
-            foreach (var pDTO in dto.Packages)
+            foreach (var pkgDto in dto.Packages)
             {
-                var pkg = new TourPackage 
-                { 
-                    PackageName = pDTO.PackageName, 
-                    Price = pDTO.Price, 
-                    DiscountPrice = pDTO.DiscountPrice,
+                var newPackage = new TourPackage
+                {
+                    PackageName = pkgDto.PackageName,
+                    Price = pkgDto.Price,
+                    DiscountPrice = pkgDto.DiscountPrice,
                     Inclusions = new List<TourPackageInclusion>()
                 };
 
-                if (pDTO.Inclusions != null)
-                    foreach(var inc in pDTO.Inclusions) 
-                        pkg.Inclusions.Add(new TourPackageInclusion { Description = inc });
-
-                tour.TourPackages.Add(pkg);
+                if (pkgDto.Inclusions is not null)
+                {
+                    foreach (var inc in pkgDto.Inclusions)
+                    {
+                        newPackage.Inclusions.Add(new TourPackageInclusion { Description = inc });
+                    }
+                }
+                tour.TourPackages.Add(newPackage);
             }
         }
 
@@ -129,13 +129,16 @@ public class TourService : ITourService
         await _tourRepository.SaveChangesAsync();
     }
 
-    // 6. GÜNCELLEME (Update)
     public async Task UpdateTourAsync(Guid id, TourPutDTO dto)
     {
-        var tour = await _tourRepository.GetByIdAsync(id, "TourFiles", "TourPackages", "TourPackages.Inclusions");
-        if (tour == null) return;
+        var tour = await _tourRepository.GetByIdAsync(id,
+            "TourFiles",
+            "TourPackages",
+            "TourPackages.Inclusions");
 
-        // Temel Bilgiler
+        if (tour is null) return;
+
+        // Sadə sahələrin yenilənməsi
         tour.Title = dto.Title;
         tour.Description = dto.Description;
         tour.Location = dto.Location;
@@ -143,47 +146,64 @@ public class TourService : ITourService
         tour.DurationNight = dto.DurationNight;
         tour.StartDate = dto.StartDate;
 
-        // Resim Silme
-        if (dto.ImageIdsToDelete != null && dto.ImageIdsToDelete.Count > 0)
+        // --- FAYL SİLMƏ (HouseService-dəki kimi) ---
+        if (dto.ImageIdsToDelete is not null && dto.ImageIdsToDelete.Count > 0)
         {
-            var toDelete = tour.TourFiles.Where(x => dto.ImageIdsToDelete.Contains(x.Id)).ToList();
-            foreach (var img in toDelete)
+            var toRemove = tour.TourFiles
+                .Where(x => dto.ImageIdsToDelete.Contains(x.Id))
+                .ToList();
+
+            foreach (var img in toRemove)
             {
                 await _fileService.DeleteAsync(img.Path);
                 tour.TourFiles.Remove(img);
             }
         }
 
-        // Yeni Resim Ekleme
-        if (dto.NewImages != null && dto.NewImages.Count > 0)
+        // --- YENİ FAYL ƏLAVƏ ETMƏ (HouseService-dəki kimi) ---
+        if (dto.NewImages is not null && dto.NewImages.Count > 0)
         {
-            if (tour.TourFiles == null) tour.TourFiles = new List<TourFile>();
-            foreach (var file in dto.NewImages)
+            foreach (var upload in dto.NewImages)
             {
-                var path = await _fileService.SaveAsync(file, "tours/gallery");
-                tour.TourFiles.Add(new TourFile { Path = path, FileName = file.FileName, ContentType = file.ContentType });
+                var key = await _fileService.SaveAsync(upload, "tours/gallery");
+                tour.TourFiles.Add(new TourFile 
+                { 
+                    TourId = tour.Id, 
+                    Path = key, 
+                    FileName = upload.FileName, 
+                    ContentType = upload.ContentType,
+                    IsMain = false // Sonradan əlavə olunanlar main olmasın
+                });
             }
         }
 
-        // Paket Güncelleme (Sil ve Yeniden Ekle Mantığı)
-        if (dto.Packages != null)
+        // --- PAKET YENİLƏMƏ ---
+        // HouseService-də Advantage-lər ID ilə işləyir, amma Tur Paketləri bütöv obyektdir.
+        // Ən təmiz yol: Mövcud paketləri silib, formdan gələnləri yenidən yaratmaqdır.
+        if (dto.Packages is not null)
         {
-            tour.TourPackages.Clear(); // Eskileri temizle
-            foreach (var pDTO in dto.Packages)
+            // Mövcud paketləri təmizlə
+            tour.TourPackages.Clear();
+
+            // Yenilərini əlavə et
+            foreach (var pkgDto in dto.Packages)
             {
-                var pkg = new TourPackage
+                var newPkg = new TourPackage
                 {
-                    PackageName = pDTO.PackageName,
-                    Price = pDTO.Price,
-                    DiscountPrice = pDTO.DiscountPrice,
+                    PackageName = pkgDto.PackageName,
+                    Price = pkgDto.Price,
+                    DiscountPrice = pkgDto.DiscountPrice,
                     Inclusions = new List<TourPackageInclusion>()
                 };
-                
-                if (pDTO.Inclusions != null)
-                    foreach (var inc in pDTO.Inclusions)
-                        pkg.Inclusions.Add(new TourPackageInclusion { Description = inc });
 
-                tour.TourPackages.Add(pkg);
+                if (pkgDto.Inclusions is not null)
+                {
+                    foreach (var inc in pkgDto.Inclusions)
+                    {
+                        newPkg.Inclusions.Add(new TourPackageInclusion { Description = inc });
+                    }
+                }
+                tour.TourPackages.Add(newPkg);
             }
         }
 
@@ -193,12 +213,24 @@ public class TourService : ITourService
 
     public async Task DeleteTourAsync(Guid id)
     {
-        var tour = await _tourRepository.GetByIdAsync(id, "TourFiles");
-        if (tour == null) return;
+        var tour = await _tourRepository.GetByIdAsync(id, 
+            "TourFiles", 
+            "TourPackages");
 
-        if (tour.TourFiles != null)
-            foreach (var f in tour.TourFiles)
-                await _fileService.DeleteAsync(f.Path);
+        if (tour is null) return;
+
+        // Fiziki faylları sil
+        if (tour.TourFiles is not null)
+        {
+            foreach (var img in tour.TourFiles)
+                await _fileService.DeleteAsync(img.Path);
+        }
+
+        // Paketləri təmizlə (House-da Relations.Clear() kimi)
+        if (tour.TourPackages is not null)
+        {
+            tour.TourPackages.Clear();
+        }
 
         _tourRepository.Delete(tour);
         await _tourRepository.SaveChangesAsync();
@@ -207,7 +239,7 @@ public class TourService : ITourService
     public async Task SoftDeleteTourAsync(Guid id)
     {
         var tour = await _tourRepository.GetByIdAsync(id);
-        if (tour == null) return;
+        if (tour is null) return;
 
         if (!tour.IsDeleted)
         {
@@ -221,7 +253,7 @@ public class TourService : ITourService
     public async Task RestoreTourAsync(Guid id)
     {
         var tour = await _tourRepository.GetByIdAsync(id);
-        if (tour == null) return;
+        if (tour is null) return;
 
         if (tour.IsDeleted)
         {
