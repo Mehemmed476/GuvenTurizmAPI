@@ -16,6 +16,7 @@ public class House : AuditableEntity
     public string City { get; set; } = "";
     public string GoogleMapsCode { get; set; } = "";
     public string CoverImage { get; set; } = "";
+    public string? AdminNotes { get; set; }
     
     
     public Guid CategoryId { get; set; } = Guid.Empty;

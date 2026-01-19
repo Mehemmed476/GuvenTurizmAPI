@@ -17,6 +17,7 @@ public record HousePutDTO
     public string Address { get; set; } = "";
     public string City { get; set; } = "";
     public string GoogleMapsCode { get; set; } = "";
+    public string? AdminNotes { get; set; }
     public IFormFile? CoverImage { get; set; }
     public Guid CategoryId { get; set; }
     public ICollection<Guid>? ImageIdsToDelete { get; set; } = new List<Guid>();

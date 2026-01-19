@@ -130,6 +130,7 @@ public class HouseService : IHouseService
         house.City = dto.City;
         house.GoogleMapsCode = dto.GoogleMapsCode;
         house.CategoryId = dto.CategoryId;
+        house.AdminNotes = dto.AdminNotes;
 
         if (dto.CoverImage is not null)
         {

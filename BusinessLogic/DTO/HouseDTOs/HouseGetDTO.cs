@@ -25,6 +25,7 @@ public record HouseGetDTO
     public string City { get; set; }
     public string GoogleMapsCode { get; set; }
     public string CoverImage { get; set; }
+    public string? AdminNotes { get; set; }
     public Guid CategoryId { get; set; }
     public Category? Category { get; set; }
     public ICollection<HouseFile> Images { get; set; } = new List<HouseFile>();

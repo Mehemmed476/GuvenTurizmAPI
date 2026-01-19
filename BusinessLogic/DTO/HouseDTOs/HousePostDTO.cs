@@ -16,8 +16,10 @@ public record HousePostDTO
     public string Address { get; set; } = "";
     public string City { get; set; } = "";
     public string GoogleMapsCode { get; set; } = "";
+    public string? AdminNotes { get; set; }
     public IFormFile? CoverImage { get; set; }
     public Guid CategoryId { get; set; }
+    
     public ICollection<IFormFile>? Images { get; set; } = new List<IFormFile>();
     public ICollection<Guid>? AdvantageIds { get; set; } = new List<Guid>();
 }
